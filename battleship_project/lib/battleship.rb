@@ -7,7 +7,7 @@ class Battleship
     def initialize(n)
         @player = Player.new
         @board = Board.new(n)
-        @remaining_misses = @board.size / 2.0
+        @remaining_misses = @board.size * 0.5
     end
 
     def start_game
