@@ -6,20 +6,20 @@
 #
 # all_vowel_pairs(["goat", "action", "tear", "impromptu", "tired", "europe"])   # => ["action europe", "tear impromptu"]
 def all_vowel_pairs(words)
-    vowels = ["a", "i", "u", "e", "o"]
     pairs = []
+    vowels = ["a", "e", "i", "o", "u"]
 
-    words.each_with_index do |arr_1, idx_1|
-        words.each_with_index do |arr_2, idx_2|
-            pair = arr_1 + " " + arr_2
-            # if vowels.all? { |vowel| pair.include?(vowel) } && idx_2 > idx_1
-            #     pairs.push(pair)
-            # end
-
-            pairs.push(pair) if vowels.all? { |vowel| pair.include?(vowel) } && idx_2 > idx_1
+    # use nested loops
+    words.each_with_index do |word_1, idx_1|
+        words.each_with_index do |word_2, idx_2|
+            pair = word_1 + " " + word_2
+            # for every vowel, is it contained in the pair?
+            # don't repeat what inner loop already did for the outer...
+            if idx_2 > idx_1 && vowels.all? { |vowel| pair.include?(vowel) }
+                pairs << pair 
+            end
         end
     end
-
     pairs
 end
 
@@ -32,8 +32,10 @@ end
 # composite?(9)     # => true
 # composite?(13)    # => false
 def composite?(num)
-    (2...num).each do |factor|
-        return true if num % factor == 0
+    (2...num).each do |i|
+        if num % i == 0
+            return true
+        end
     end
 
     false
@@ -50,15 +52,7 @@ end
 # find_bigrams("the theater is empty", ["cy", "em", "ty", "ea", "oo"])  # => ["em", "ty", "ea"]
 # find_bigrams("to the moon and back", ["ck", "oo", "ha", "at"])        # => ["ck", "oo"]
 def find_bigrams(str, bigrams)
-    found = []
-
-    # bigrams.each do |bigram|
-    #     found.push(bigram) if str.include?(bigram)
-    # end
-
-    bigrams.each { |bigram| found.push(bigram) if str.include?(bigram) }
-
-    found
+    bigrams.select { |bigram| str.include?(bigram) }
 end
 
 class Hash
@@ -76,14 +70,12 @@ class Hash
     # hash_2.my_select { |k, v| k + 1 == v }      # => {10=>11, 5=>6, 7=>8})
     # hash_2.my_select                            # => {4=>4}
     def my_select(&prc)
-        prc ||= Proc.new { |key, value| key == value }
+        prc ||=  Proc.new { |k, v| k == v }
 
-        new_hash = Hash.new(0)
+        new_hash = {}
 
-        self.each do |key, value|
-            if prc.call(key, value)
-                new_hash[key] = value
-            end
+        self.each do |k, v|
+            new_hash[k] = v if prc.call(k, v) # == true
         end
 
         new_hash
@@ -102,17 +94,19 @@ class String
     def substrings(length = nil)
         subs = []
 
-        (0...self.length).each do |start_position|
-            (start_position...self.length).each do |next_position|
-                subs.push ( self[start_position..next_position] )
+        (0...self.length).each do |start_idx| # c
+            (start_idx...self.length).each do |end_idx|
+                sub = self[start_idx..end_idx]
+                subs << sub
             end
         end
 
-        if length == nil
+        if length.nil?
             subs
         else
             subs.select { |sub| sub.length == length }
         end
+
     end
 
 
@@ -126,15 +120,15 @@ class String
     # "bootcamp".caesar_cipher(2) #=> "dqqvecor"
     # "zebra".caesar_cipher(4)    #=> "difve"
     def caesar_cipher(num)
-        alphabet = "abcdefghijklmnopqrstuvwxyz"
         new_str = ""
+        alpha = ("a".."z").to_a
 
-        # iterate through each char on string
         self.each_char do |char|
-            old_index = alphabet.index(char)
-            new_index = old_index + num
-            new_char = alphabet[new_index % 26]
-            new_str += new_char
+            start_pos = alpha.index(char)
+        # new_pos should be strictly less than 26
+        #   which is the length of alphabet
+            new_pos = (start_pos + num) % 26
+            new_str += alpha[new_pos]
         end
 
         new_str
