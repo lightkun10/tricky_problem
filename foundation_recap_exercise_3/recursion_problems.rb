@@ -1,24 +1,3 @@
-require "byebug"
-
-def no_dupes?(arr)
-     count = Hash.new(0)
-
-     arr.each { |el| count[ele] += 1 }
-
-     count.keys.select { |el| count[el] == 1 }
-
-end
-
-
-#########################################################################################
-
-# vowel_rotate
-# Write a method vowel_rotate(str) that accepts a string as an arg and returns 
-# the string where every vowel is replaced with the vowel the appears before it sequentially 
-# in the original string. The first vowel of the string should be replaced with the last vowel.
-
-
-
 def vowel_rotate(str)
 # Make a copy of original string
     new_str = str[0..-1]
