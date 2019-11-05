@@ -107,3 +107,97 @@ longest_streak('abc')         # = > 'c'
 # 22 is a bi-prime because 2 * 11
 # 25 is a bi-prime because 5 * 5
 # 24 is not a bi-prime because no two prime numbers have a product of 24
+
+def prime?(num)
+    return false if num < 2
+
+    (2...num).none? { |i| num % i == 0 }
+end
+
+def prime_factors(num)
+    (2...num).select { |factor| num % factor == 0 && prime?(factor) }
+end
+
+def bi_prime?(num)
+    puts prime_facts = prime_factors(num)
+
+    prime_facts.any? do |a|
+        b = num / a
+        prime_facts.include?(b)
+    end
+end
+
+bi_prime?(14)
+bi_prime?(64)
+
+##########################################
+
+## vigenere_cipher
+
+# A Caesar cipher takes a word and encrypts it by offsetting each letter 
+# in the word by a fixed number, called the key. Given a key of 3, 
+# for example: a -> d, p -> s, and y -> b.
+
+# A Vigenere Cipher is a Caesar cipher, but instead of a single key, 
+# a sequence of keys is used. For example, if we encrypt "bananasinpajamas" 
+# with the key sequence 1, 2, 3, then the result would be "ccqbpdtkqqcmbodt":
+
+# Message:  b a n a n a s i n p a j a m a s
+# Keys:     1 2 3 1 2 3 1 2 3 1 2 3 1 2 3 1
+# Result:   c c q b p d t k q q c m b o d t
+# Write a method vigenere_cipher(message, keys) 
+# that accepts a string and a key-sequence as args, 
+# returning the encrypted message. Assume that the message consists 
+# of only lowercase alphabetic characters.
+
+def vigenere_cipher(message, keys)
+    alphabet = ("a".."z").to_a
+    new_msg = ""
+
+    message.each_char.with_index do |char|
+        old_pos = alphabet.index(char)
+        new_pos = old_pos + keys[idx % keys.length]
+        new_msg += alphabet[new_pos % alphabet.length]
+    end
+
+    new_msg
+end
+
+#########################################################################################
+
+## vowel_rotate
+# Write a method vowel_rotate(str) that accepts 
+# a string as an arg and returns 
+# the string where every vowel is replaced with the vowel the appears 
+# before it sequentially 
+# in the original string. The first vowel of the string should 
+# be replaced with the last vowel.
+
+
+def vowel_rotate(str)
+# make a copy of a original string
+    new_str = str[0..-1]
+    vowels = "aeiou"
+
+# obtain the indices of vowels
+    vowel_indices = (0...str.length).select { |i| vowels.include?(str[i]) }
+    # [1, 4, 6]
+
+# rotate the positions
+    new_vowel_indices = vowel_indices.rotate(-1) # [6, 1, 4]
+
+# iterate through the ORIGINAL vowel indices
+    vowel_indices.each_with_index do |vowel_idx, i| 
+        # vowels_idx = 1, 4, 6;          i = 0, 1, 2
+        new_vowel = str[new_vowel_indices[i]] # str[6]
+        new_str[vowel_idx] = new_vowel
+    end
+
+    new_str
+end
+
+vowel_rotate('computer')      # => "cempotur"
+vowel_rotate('oranges')       # => "erongas"
+vowel_rotate('headphones')    # => "heedphanos"
+vowel_rotate('bootcamp')      # => "baotcomp"
+vowel_rotate('awesome')       # => "ewasemo"
